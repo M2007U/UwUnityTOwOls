@@ -39,6 +39,8 @@ public class M2007U_UwUnity_ModuleGenerator : EditorWindow
     string USER_Pwefabs_Name_L = "(";
     string USER_Pwefabs_Name_R = ")";
 
+    int USER_Spawncount = 1;
+
     
     [MenuItem("M2007U UwUnity tOwOls/Module Generator")]
     private static void ShowWindow()
@@ -127,60 +129,66 @@ public class M2007U_UwUnity_ModuleGenerator : EditorWindow
 
             EOwO.MakeSpace(2);
 
+            USER_Spawncount = EditorGUILayout.IntField("Spawn Count", USER_Spawncount);
+
             if(GUILayout.Button("Spawn Choice"))
             {
                 if (EOwO_checkChoiceIfNotNull())
                 {
-                    float chosenIndexFloat = UnityEngine.Random.Range(0f,1f);
-                    int chosenIndexInt = 0;
-
-                    while(chosenIndexFloat > 0 && chosenIndexInt < USER_Pwefabs_prob.Count)
+                    for(int i = 0; i < USER_Spawncount; i++)
                     {
-                        chosenIndexFloat = chosenIndexFloat - USER_Pwefabs_prob[chosenIndexInt];
-                        chosenIndexInt++;
-                    }
+                        float chosenIndexFloat = UnityEngine.Random.Range(0f, 1f); //random float
+                        int chosenIndexInt = 0;
 
-                    //if chosenIndexInt is out of range
-                    chosenIndexInt = Math.Min(chosenIndexInt, USER_Pwefabs_objects.Count);
-                    chosenIndexInt--;
+                        while (chosenIndexFloat > 0 && chosenIndexInt < USER_Pwefabs_prob.Count)
+                        {
+                            chosenIndexFloat = chosenIndexFloat - USER_Pwefabs_prob[chosenIndexInt];
+                            chosenIndexInt++;
+                        }
 
-                    GameObject KopyObject = Instantiate(USER_Pwefabs_objects[chosenIndexInt],USER_ParentObject.transform);
+                        //if chosenIndexInt is out of range
+                        chosenIndexInt = Math.Min(chosenIndexInt, USER_Pwefabs_objects.Count);
+                        chosenIndexInt--;
 
-                    //set position and rotation
-                    KopyObject.transform.localPosition = new 
-                    Vector3
-                    (
-                        UnityEngine.Random.Range(USER_transform_pos_min.x,USER_transform_pos_max.x),
-                        UnityEngine.Random.Range(USER_transform_pos_min.y,USER_transform_pos_max.y),
-                        UnityEngine.Random.Range(USER_transform_pos_min.z,USER_transform_pos_max.z)
-                    );
+                        GameObject KopyObject = Instantiate(USER_Pwefabs_objects[chosenIndexInt], USER_ParentObject.transform);
 
-                    KopyObject.transform.eulerAngles = new
-                    Vector3
-                    (
-                        UnityEngine.Random.Range(USER_transform_rot_min.x,USER_transform_rot_max.x),
-                        UnityEngine.Random.Range(USER_transform_rot_min.y,USER_transform_rot_max.y),
-                        UnityEngine.Random.Range(USER_transform_rot_min.z,USER_transform_rot_max.z)
-                    );
-
-                    //grid snap ?
-                    if (USER_transform_isGrid)
-                    {
-                        KopyObject.transform.localPosition = new 
+                        //set position and rotation
+                        KopyObject.transform.localPosition = new
                         Vector3
                         (
-                            FOwO.float_GridSnap(USER_transform_pos_grd.x,KopyObject.transform.localPosition.x),
-                            FOwO.float_GridSnap(USER_transform_pos_grd.y,KopyObject.transform.localPosition.y),
-                            FOwO.float_GridSnap(USER_transform_pos_grd.z,KopyObject.transform.localPosition.z)
+                            UnityEngine.Random.Range(USER_transform_pos_min.x, USER_transform_pos_max.x),
+                            UnityEngine.Random.Range(USER_transform_pos_min.y, USER_transform_pos_max.y),
+                            UnityEngine.Random.Range(USER_transform_pos_min.z, USER_transform_pos_max.z)
                         );
-                    }
 
-                    //index naming ?
-                    if (USER_Pwefabs_Name_bool)
-                    {
-                        KopyObject.name = USER_Pwefabs_objects[chosenIndexInt].name + USER_Pwefabs_Name_L + USER_Pwefabs_Name_Index + USER_Pwefabs_Name_R;
-                        USER_Pwefabs_Name_Index++;
+                        KopyObject.transform.eulerAngles = new
+                        Vector3
+                        (
+                            UnityEngine.Random.Range(USER_transform_rot_min.x, USER_transform_rot_max.x),
+                            UnityEngine.Random.Range(USER_transform_rot_min.y, USER_transform_rot_max.y),
+                            UnityEngine.Random.Range(USER_transform_rot_min.z, USER_transform_rot_max.z)
+                        );
+
+                        //grid snap ?
+                        if (USER_transform_isGrid)
+                        {
+                            KopyObject.transform.localPosition = new
+                            Vector3
+                            (
+                                FOwO.float_GridSnap(USER_transform_pos_grd.x, KopyObject.transform.localPosition.x),
+                                FOwO.float_GridSnap(USER_transform_pos_grd.y, KopyObject.transform.localPosition.y),
+                                FOwO.float_GridSnap(USER_transform_pos_grd.z, KopyObject.transform.localPosition.z)
+                            );
+                        }
+
+                        //index naming ?
+                        if (USER_Pwefabs_Name_bool)
+                        {
+                            KopyObject.name = USER_Pwefabs_objects[chosenIndexInt].name + USER_Pwefabs_Name_L + USER_Pwefabs_Name_Index + USER_Pwefabs_Name_R;
+                            USER_Pwefabs_Name_Index++;
+                        }
                     }
+                    
                 }
 
                 
