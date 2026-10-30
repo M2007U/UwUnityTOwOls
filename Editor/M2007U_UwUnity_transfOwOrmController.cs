@@ -55,15 +55,27 @@ public class M2007U_UwUnity_transfOwOrmController : EditorWindow
 
     //surround the parent with the selected Objects
     bool Foldout_Surround = false;
+    GameObject USER_Surround_Target;
     float USER_Surround_Radius = 1f;
     float USER_Surround_Phase = 0f;
     float USER_Surround_Step = 0f;
     string USER_Surround_Axis = "y";
 
+    //average position
+    //must at least select 3 or more objects
+    //the last object is the object to place at the average of the rest
+    //e.g. the 4 selected objects are [a,b,c,d], then d = (a+b+c)/3
+    bool Foldout_PositionAverage = false;
+
     //lerping from a transform to another transform
     bool Foldout_LerpTransform = false;
     GameObject USER_LerpTransform_ObjectA;
     GameObject USER_LerpTransform_ObjectB;
+
+    //let the selected gameObject look at another GameObject
+    bool Foldout_LookAt = false;
+    Vector3 USER_LookAt_WorldUp = new Vector3(0f,1f,0f);
+
 
     //having a starting refference, then iterate through a list, like array modifier in Blender
     bool Foldout_ArrayIterate = false;
@@ -101,11 +113,12 @@ public class M2007U_UwUnity_transfOwOrmController : EditorWindow
 
 
 
-
-        EOwO.MakeSpace(1);
+        EOwO.MakeSpace(2);
         Foldout_Scatter_Box = EditorGUILayout.Foldout(Foldout_Scatter_Box, "Scatter : Box", true);
         if(Foldout_Scatter_Box)
         {
+            GUILayout.Label("Scatter Selected GameObjects in a Cuboid area");
+            EOwO.MakeSpace(1);
             USER_Scatter_Box_Range_Min = EditorGUILayout.Vector3Field("Range : Min",USER_Scatter_Box_Range_Min);
             USER_Scatter_Box_Range_Max = EditorGUILayout.Vector3Field("Range : Max",USER_Scatter_Box_Range_Max);
             
@@ -127,11 +140,12 @@ public class M2007U_UwUnity_transfOwOrmController : EditorWindow
             }
         }
         
-
-        EOwO.MakeSpace(1);
+        EOwO.MakeSpace(2);
         Foldout_Scatter_Ring = EditorGUILayout.Foldout(Foldout_Scatter_Ring, "Scatter : Ring", true);
         if(Foldout_Scatter_Ring)
         {
+            GUILayout.Label("Scatter Selected GameObjects in a Ring");
+            EOwO.MakeSpace(1);
             USER_Scatter_Ring_Radius_Min = EditorGUILayout.FloatField("Radius : Min",USER_Scatter_Ring_Radius_Min);
             USER_Scatter_Ring_Radius_Max = EditorGUILayout.FloatField("Radius : Min",USER_Scatter_Ring_Radius_Max);
             USER_Scatter_Ring_Axis = EditorGUILayout.TextField("Axis",USER_Scatter_Ring_Axis);
@@ -180,11 +194,12 @@ public class M2007U_UwUnity_transfOwOrmController : EditorWindow
             }
         }
         
-        
-        EOwO.MakeSpace(1);
+        EOwO.MakeSpace(2);
         Foldout_Scatter_Sphere = EditorGUILayout.Foldout(Foldout_Scatter_Sphere, "Scatter : Sphere", true);
         if(Foldout_Scatter_Sphere)
         {
+            GUILayout.Label("Scatter Selected GameObjects in a Spherical area");
+            EOwO.MakeSpace(1);
             USER_Scatter_Sphere_Radius_Min = EditorGUILayout.FloatField("Radius : Min",USER_Scatter_Sphere_Radius_Min);
             USER_Scatter_Sphere_Radius_Max = EditorGUILayout.FloatField("Radius : Max",USER_Scatter_Sphere_Radius_Max);
 
@@ -205,11 +220,12 @@ public class M2007U_UwUnity_transfOwOrmController : EditorWindow
             }
         }
 
-
-        EOwO.MakeSpace(1);
+        EOwO.MakeSpace(2);
         Foldout_GridSnap = EditorGUILayout.Foldout(Foldout_GridSnap, "Grid Snap", true);
         if(Foldout_GridSnap)
         {
+            GUILayout.Label("Snap the Selected GameObjects Along each axis\nto the nearest snapping point");
+            EOwO.MakeSpace(1);
             USER_GridSnap_UseX = EditorGUILayout.Toggle("along X",USER_GridSnap_UseX);
             USER_GridSnap_UseY = EditorGUILayout.Toggle("along Y",USER_GridSnap_UseY);
             USER_GridSnap_UseZ = EditorGUILayout.Toggle("along Z",USER_GridSnap_UseZ);
@@ -261,11 +277,13 @@ public class M2007U_UwUnity_transfOwOrmController : EditorWindow
             }
         }
 
-
-        EOwO.MakeSpace(1);
+        EOwO.MakeSpace(2);
         Foldout_GridArrange = EditorGUILayout.Foldout(Foldout_GridArrange, "Grid Arrange", true);
         if(Foldout_GridArrange)
         {
+            GUILayout.Label("Arrange the Selected GameObjects into a Lattice");
+            GUILayout.Label("Latice Order : which axis will be used first or last\nto arrange the objects, use 0, 1, 2");
+            EOwO.MakeSpace(1);
             USER_GridArrange_AxisOrder = EditorGUILayout.Vector3Field("Axis Order",USER_GridArrange_AxisOrder);
             USER_GridArrange_AxisSize = EditorGUILayout.Vector3IntField("Axis Size",USER_GridArrange_AxisSize);
             USER_GridArrange_Step = EditorGUILayout.Vector3Field("Step",USER_GridArrange_Step);
@@ -399,11 +417,12 @@ public class M2007U_UwUnity_transfOwOrmController : EditorWindow
             }
         }
 
-
-        EOwO.MakeSpace(1);
+        EOwO.MakeSpace(2);
         Foldout_PositionScale = EditorGUILayout.Foldout(Foldout_PositionScale, "Local Position Scale", true);
         if(Foldout_PositionScale)
         {
+            GUILayout.Label("Scale the Local Position of the Selected Game Objects");
+            EOwO.MakeSpace(1);
             USER_PositionScale_Scaler = EditorGUILayout.Vector3Field("Scale Factor",USER_PositionScale_Scaler);
 
             if (GUILayout.Button("Grid Selected Objects") && Selection.gameObjects.Length > 0)
@@ -422,17 +441,19 @@ public class M2007U_UwUnity_transfOwOrmController : EditorWindow
             }
         }
 
-
-        EOwO.MakeSpace(1);
-        Foldout_Surround = EditorGUILayout.Foldout(Foldout_Surround, "Surround Parent", true);
+        EOwO.MakeSpace(2);
+        Foldout_Surround = EditorGUILayout.Foldout(Foldout_Surround, "Surround", true);
         if(Foldout_Surround)
         {
+            GUILayout.Label("Surround a Target GameObject\nwith the Selected GameObjects");
+            EOwO.MakeSpace(1);
+            USER_Surround_Target = EditorGUILayout.ObjectField("Target", USER_Surround_Target, typeof(GameObject), true) as GameObject;
             USER_Surround_Radius = EditorGUILayout.FloatField("Radius",USER_Surround_Radius);
             USER_Surround_Phase = EditorGUILayout.FloatField("Phase",USER_Surround_Phase);
             USER_Surround_Step = EditorGUILayout.FloatField("Step",USER_Surround_Step);
             USER_Surround_Axis = EditorGUILayout.TextField("Axis",USER_Surround_Axis);
 
-            if (GUILayout.Button("Surround Parent") && Selection.gameObjects.Length > 0)
+            if (GUILayout.Button("Surround") && Selection.gameObjects.Length > 0)
             {
                 //2 pi rad = 360 deg
                 // rad = 360 deg /2 /pi
@@ -444,14 +465,17 @@ public class M2007U_UwUnity_transfOwOrmController : EditorWindow
 
                 GameObject[] ListGO = Selection.gameObjects;
 
-                
-                if (USER_Surround_Axis == "x")
+                if (USER_Surround_Target == null)
+                {
+                    Debug.LogError("Target is missing");
+                }
+                else if (USER_Surround_Axis == "x")
                 {
                     for(int i = 0 ; i < ListGO.Length ; i++)
                     {
                         float Theta = (USER_Surround_Phase + i * USER_Surround_Step) / 360 * 2 * Mathf.PI;
 
-                        ListGO[i].transform.localPosition = new Vector3
+                        ListGO[i].transform.position = USER_Surround_Target.transform.position + new Vector3
                         (
                             0,
                             Mathf.Sin(Theta) * USER_Surround_Radius,
@@ -465,7 +489,7 @@ public class M2007U_UwUnity_transfOwOrmController : EditorWindow
                     {
                         float Theta = (USER_Surround_Phase + i * USER_Surround_Step) / 360 * 2 * Mathf.PI;
 
-                        ListGO[i].transform.localPosition = new Vector3
+                        ListGO[i].transform.position = USER_Surround_Target.transform.position + new Vector3
                         (
                             Mathf.Cos(Theta) * USER_Surround_Radius,
                             0,
@@ -479,7 +503,7 @@ public class M2007U_UwUnity_transfOwOrmController : EditorWindow
                     {
                         float Theta = (USER_Surround_Phase + i * USER_Surround_Step) / 360 * 2 * Mathf.PI;
 
-                        ListGO[i].transform.localPosition = new Vector3
+                        ListGO[i].transform.position = USER_Surround_Target.transform.position + new Vector3
                         (
                             Mathf.Cos(Theta) * USER_Surround_Radius,
                             Mathf.Sin(Theta) * USER_Surround_Radius,
@@ -489,15 +513,50 @@ public class M2007U_UwUnity_transfOwOrmController : EditorWindow
                 }
                 else
                 {
-                    Debug.LogError("M2007U UwUnity tOwOls : the Axis must be either \"x\" or \"y\" or \"z\"");
+                    Debug.LogError("the Axis must be either \"x\" or \"y\" or \"z\"");
+                }
+
+                
+
+            }
+        }
+
+        EOwO.MakeSpace(2);
+        Foldout_PositionAverage = EditorGUILayout.Foldout(Foldout_PositionAverage, "Average Position", true);
+        if (Foldout_PositionAverage)
+        {
+            GUILayout.Label("Select 3 or more GameObjects,\nthe last Selected Object will be placed\nat the MidPoint of the rest");
+            EOwO.MakeSpace(1);
+            if (GUILayout.Button("Apply"))
+            {
+                if (Selection.gameObjects.Length < 3)
+                {
+                    Debug.LogWarning("must at least select 3 objects, last object is the object to place");
+                }
+                else
+                {
+                    Vector3 BoxVector = new Vector3(0f, 0f, 0f);
+                    for(int i = 0; i < Selection.gameObjects.Length; i++)
+                    {
+                        if (i < Selection.gameObjects.Length - 1) //when it is not the last object
+                        {
+                            BoxVector = BoxVector + Selection.gameObjects[i].transform.position;
+                        }
+                        else
+                        {
+                            Selection.gameObjects[i].transform.position = BoxVector * (1f / (Selection.gameObjects.Length - 1));
+                        }
+                    }
                 }
             }
         }
 
-        EOwO.MakeSpace(1);
+        EOwO.MakeSpace(2);
         Foldout_LerpTransform = EditorGUILayout.Foldout(Foldout_LerpTransform, "Transform Lerp", true);
         if(Foldout_LerpTransform)
         {
+            GUILayout.Label("Using 2 GameObjects as End Points,\nplace the Selected GameObjects\nin between the 2 Objects using LERP");
+            EOwO.MakeSpace(1);
             USER_LerpTransform_ObjectA = EditorGUILayout.ObjectField("Pin Object A",USER_LerpTransform_ObjectA,typeof(GameObject),true) as GameObject;
             USER_LerpTransform_ObjectB = EditorGUILayout.ObjectField("Pin Object B",USER_LerpTransform_ObjectB,typeof(GameObject),true) as GameObject;
 
@@ -633,10 +692,37 @@ public class M2007U_UwUnity_transfOwOrmController : EditorWindow
 
         }
 
-        EOwO.MakeSpace(1);
+        EOwO.MakeSpace(2);
+        Foldout_LookAt = EditorGUILayout.Foldout(Foldout_LookAt, "Look At", true);
+        if(Foldout_LookAt)
+        {
+            GUILayout.Label("Make the Selected GameObjects Look At\nthe last Selected Object");
+            EOwO.MakeSpace(1);
+            USER_LookAt_WorldUp = EditorGUILayout.Vector3Field("World Up", USER_LookAt_WorldUp);
+
+            if (GUILayout.Button("Apply"))
+            {
+                if (Selection.gameObjects.Length < 2)
+                {
+                    Debug.LogWarning("must at least select 2 Game Objects");
+                }
+                else
+                {
+                    for (int i = 0; i < Selection.gameObjects.Length - 1 ; i++)
+                    {
+                        Selection.gameObjects[i].transform.LookAt( Selection.gameObjects[ Selection.gameObjects.Length - 1 ].transform, USER_LookAt_WorldUp);
+                    }
+                }
+            }
+        }
+
+        EOwO.MakeSpace(2);
         Foldout_ArrayIterate = EditorGUILayout.Foldout(Foldout_ArrayIterate, "Array Iterate", true);
         if(Foldout_ArrayIterate)
         {
+            GUILayout.Label("Apply Changes to an array of Selected Game Objects,\nwhere the changes grows linearly");
+            GUILayout.Label("if you Use Blender before,\nthis is the equivalent of Array Modifier");
+            EOwO.MakeSpace(1);
             USER_ArrayIterate_Object = EditorGUILayout.ObjectField("Starting Object",USER_ArrayIterate_Object,typeof(GameObject),true) as GameObject;
             USER_ArrayIterate_Step_Pos = EditorGUILayout.Vector3Field("Step : Position",USER_ArrayIterate_Step_Pos);
             USER_ArrayIterate_Step_Rot = EditorGUILayout.Vector3Field("Step : Rotation",USER_ArrayIterate_Step_Rot);
@@ -673,10 +759,12 @@ public class M2007U_UwUnity_transfOwOrmController : EditorWindow
 
         }
 
-        EOwO.MakeSpace(1);
+        EOwO.MakeSpace(2);
         Foldout_ScaleRandom = EditorGUILayout.Foldout(Foldout_ScaleRandom, "Scale Random", true);
         if(Foldout_ScaleRandom)
         {
+            GUILayout.Label("Randomly Scale the Selected Game Objects");
+            EOwO.MakeSpace(1);
             USER_ScaleRandom_min = EditorGUILayout.Vector3Field("local Scale : min",USER_ScaleRandom_min);
             USER_ScaleRandom_max = EditorGUILayout.Vector3Field("local Scale : max",USER_ScaleRandom_max);
 
