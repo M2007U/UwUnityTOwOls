@@ -59,4 +59,4 @@ this can be used for
 
 ## 🎯 the Aim of UwUnity tOwOls
 
-to make painful Unity work into simple work
+to make painful Unity work into simple clicks
